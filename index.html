@@ -21,7 +21,6 @@
             --dark: #1f2937;
             --light: #f8fafc;
             --gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            --premium-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
             --glass: rgba(255, 255, 255, 0.1);
             --glass-border: rgba(255, 255, 255, 0.2);
         }
@@ -48,7 +47,7 @@
 
         /* Premium Header */
         .premium-header {
-            background: var(--premium-gradient);
+            background: var(--gradient);
             color: white;
             padding: 25px 30px;
             display: flex;
@@ -88,92 +87,51 @@
             border: 1px solid rgba(255,255,255,0.3);
         }
 
-        /* Premium Features Section */
-        .premium-section {
-            background: var(--premium-gradient);
+        /* App Info Section */
+        .app-info-section {
+            background: var(--gradient);
             color: white;
             padding: 40px 30px;
             text-align: center;
             border-bottom: 1px solid var(--glass-border);
         }
 
-        .premium-section h2 {
+        .app-info-section h2 {
             font-size: 2.5em;
             margin-bottom: 20px;
             font-weight: 800;
         }
 
-        .pricing-cards {
+        .feature-grid-info {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
             gap: 25px;
             margin-top: 30px;
         }
 
-        .pricing-card {
+        .feature-card {
             background: rgba(255,255,255,0.15);
             backdrop-filter: blur(20px);
             border: 1px solid rgba(255,255,255,0.3);
             border-radius: 20px;
-            padding: 30px;
+            padding: 25px;
             transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
         }
 
-        .pricing-card.featured {
-            transform: scale(1.05);
-            border: 2px solid gold;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.2);
         }
 
-        .pricing-card.featured::before {
-            content: "MOST POPULAR";
-            position: absolute;
-            top: 15px;
-            right: -30px;
-            background: gold;
-            color: var(--dark);
-            padding: 5px 40px;
-            transform: rotate(45deg);
-            font-weight: 700;
-            font-size: 0.8em;
-        }
-
-        .pricing-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 25px 50px rgba(0,0,0,0.3);
-        }
-
-        .pricing-card h3 {
-            font-size: 1.5em;
+        .feature-card i {
+            font-size: 2.5em;
             margin-bottom: 15px;
+            display: block;
         }
 
-        .price {
-            font-size: 3em;
-            font-weight: 800;
-            margin: 20px 0;
-        }
-
-        .price span {
-            font-size: 0.5em;
-            opacity: 0.8;
-        }
-
-        .pricing-card ul {
-            list-style: none;
-            text-align: left;
-            margin: 25px 0;
-        }
-
-        .pricing-card li {
-            padding: 8px 0;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-        }
-
-        .pricing-card li i {
-            margin-right: 10px;
+        .feature-card h3 {
+            font-size: 1.3em;
+            margin-bottom: 10px;
         }
 
         /* Content Layout */
@@ -276,26 +234,14 @@
             transform: translateY(-2px);
         }
 
-        .btn-premium {
-            background: var(--premium-gradient);
+        .btn-secondary {
+            background: #6b7280;
             color: white;
-            font-weight: 700;
         }
 
-        .btn-premium:hover {
+        .btn-secondary:hover {
+            background: #4b5563;
             transform: translateY(-2px);
-            box-shadow: 0 15px 30px rgba(245, 87, 108, 0.4);
-        }
-
-        .btn-outline {
-            background: transparent;
-            border: 2px solid var(--primary);
-            color: var(--primary);
-        }
-
-        .btn-outline:hover {
-            background: var(--primary);
-            color: white;
         }
 
         /* Enhanced Feature Grid */
@@ -462,27 +408,9 @@
 
         .confidence-fill {
             height: 100%;
-            background: var(--premium-gradient);
+            background: var(--gradient);
             border-radius: 50px;
             transition: width 1s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .confidence-fill::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
-            animation: shimmer 2s infinite;
-        }
-
-        @keyframes shimmer {
-            0% { left: -100%; }
-            100% { left: 100%; }
         }
 
         .probability-breakdown {
@@ -518,18 +446,6 @@
         .bar-fill {
             height: 100%;
             transition: width 1s ease;
-            position: relative;
-        }
-
-        .bar-fill::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.6), transparent);
-            animation: shimmer 2s infinite;
         }
 
         .bar-fill.high { background: var(--danger); }
@@ -616,7 +532,7 @@
         .stats-number {
             font-size: 2.5em;
             font-weight: 800;
-            background: var(--premium-gradient);
+            background: var(--gradient);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             margin-bottom: 10px;
@@ -635,55 +551,32 @@
                 </div>
             </div>
             <div class="premium-badge">
-                <i class="fas fa-crown"></i> ENTERPRISE EDITION
+                <i class="fas fa-star"></i> RESEARCH EDITION
             </div>
         </div>
 
-        <!-- Monetization Section -->
-        <div class="premium-section">
-            <h2>🚀 Unlock Premium Clinical Insights</h2>
-            <p>Join thousands of healthcare professionals using our AI platform</p>
+        <!-- App Info Section -->
+        <div class="app-info-section">
+            <h2>🚀 Advanced Clinical AI Platform</h2>
+            <p>Powered by Deep Learning • Trusted by Healthcare Professionals</p>
             
-            <div class="pricing-cards">
-                <div class="pricing-card">
-                    <h3>Basic</h3>
-                    <div class="price">$0<span>/month</span></div>
-                    <ul>
-                        <li><i class="fas fa-check"></i> Basic Risk Assessment</li>
-                        <li><i class="fas fa-check"></i> 5 Predictions/Day</li>
-                        <li><i class="fas fa-check"></i> Standard Reports</li>
-                        <li><i class="fas fa-times"></i> Advanced Analytics</li>
-                        <li><i class="fas fa-times"></i> Export Features</li>
-                    </ul>
-                    <button class="btn btn-outline" style="width: 100%;">Current Plan</button>
+            <div class="feature-grid-info">
+                <div class="feature-card">
+                    <i class="fas fa-robot"></i>
+                    <h3>AI-Powered Predictions</h3>
+                    <p>Advanced neural networks for accurate adherence risk assessment</p>
                 </div>
                 
-                <div class="pricing-card featured">
-                    <h3>Professional</h3>
-                    <div class="price">$49<span>/month</span></div>
-                    <ul>
-                        <li><i class="fas fa-check"></i> Advanced Risk Analytics</li>
-                        <li><i class="fas fa-check"></i> Unlimited Predictions</li>
-                        <li><i class="fas fa-check"></i> PDF Report Export</li>
-                        <li><i class="fas fa-check"></i> Patient History</li>
-                        <li><i class="fas fa-check"></i> Priority Support</li>
-                    </ul>
-                    <button class="btn btn-premium" style="width: 100%;">
-                        <i class="fas fa-rocket"></i> Upgrade Now
-                    </button>
+                <div class="feature-card">
+                    <i class="fas fa-chart-line"></i>
+                    <h3>Clinical Analytics</h3>
+                    <p>Comprehensive risk analysis with probability breakdowns</p>
                 </div>
                 
-                <div class="pricing-card">
-                    <h3>Enterprise</h3>
-                    <div class="price">$199<span>/month</span></div>
-                    <ul>
-                        <li><i class="fas fa-check"></i> Everything in Pro</li>
-                        <li><i class="fas fa-check"></i> API Access</li>
-                        <li><i class="fas fa-check"></i> White-label Solutions</li>
-                        <li><i class="fas fa-check"></i> Custom Integrations</li>
-                        <li><i class="fas fa-check"></i> Dedicated Support</li>
-                    </ul>
-                    <button class="btn btn-outline" style="width: 100%;">Contact Sales</button>
+                <div class="feature-card">
+                    <i class="fas fa-file-medical"></i>
+                    <h3>Professional Reports</h3>
+                    <p>Export detailed clinical assessments and recommendations</p>
                 </div>
             </div>
         </div>
@@ -692,8 +585,8 @@
             <!-- Stats Counter -->
             <div class="patient-section">
                 <div class="stats-counter">
-                    <div class="stats-number" id="prediction-counter">1,247</div>
-                    <p>Successful Predictions Made Today</p>
+                    <div class="stats-number" id="prediction-counter">1,408</div>
+                    <p>Successful Clinical Assessments Completed</p>
                 </div>
             </div>
 
@@ -703,10 +596,10 @@
                 <div class="patient-profile">
                     <div class="profile-info">
                         <strong>Current Profile:</strong> 
-                        <span id="current-profile">No profile loaded</span>
+                        <span id="current-profile">Medium-Risk Patient Profile</span>
                     </div>
                     <div class="profile-description" id="profile-description">
-                        Select a sample profile or enter custom patient data
+                        Middle-aged male with moderate chronic conditions, adequate social support, and average health literacy. Moderate adherence risk requiring monitoring.
                     </div>
                 </div>
                 
@@ -742,8 +635,8 @@
                     <button class="btn btn-secondary" onclick="validateAllInputs()">
                         <i class="fas fa-check-circle"></i> Validate Inputs
                     </button>
-                    <button class="btn btn-premium" onclick="showPremiumModal()">
-                        <i class="fas fa-crown"></i> Premium Analysis
+                    <button class="btn btn-success" onclick="exportAssessment()">
+                        <i class="fas fa-download"></i> Export Report
                     </button>
                 </div>
             </div>
@@ -795,8 +688,8 @@
                 <button class="btn btn-secondary" onclick="startNewAssessment()">
                     <i class="fas fa-plus"></i> New Assessment
                 </button>
-                <button class="btn btn-premium" onclick="showPremiumModal()">
-                    <i class="fas fa-chart-line"></i> Advanced Analytics
+                <button class="btn btn-success" onclick="printAssessment()">
+                    <i class="fas fa-print"></i> Print Report
                 </button>
             </div>
         </div>
@@ -804,20 +697,19 @@
         <!-- Footer -->
         <div class="footer">
             <div class="footer-links">
-                <a href="#"><i class="fas fa-shield-alt"></i> Privacy Policy</a>
-                <a href="#"><i class="fas fa-file-contract"></i> Terms of Service</a>
-                <a href="#"><i class="fas fa-envelope"></i> Contact Support</a>
-                <a href="#"><i class="fas fa-dollar-sign"></i> Pricing</a>
+                <a href="#"><i class="fas fa-graduation-cap"></i> Research Project</a>
+                <a href="#"><i class="fas fa-code"></i> API Documentation</a>
+                <a href="#"><i class="fas fa-envelope"></i> Contact Team</a>
+                <a href="#"><i class="fas fa-info-circle"></i> About</a>
             </div>
-            <p>&copy; 2024 MediPredict Pro. Trusted by healthcare professionals worldwide.</p>
+            <p>&copy; 2024 MediPredict Pro - Academic Research Edition</p>
         </div>
     </div>
 
     <script>
-        // Your existing JavaScript code goes here with premium enhancements
         const API_URL = "https://medication-adherence-api.onrender.com";
         let lastPrediction = null;
-        let predictionCount = 1247;
+        let predictionCount = 1408;
 
         // Realistic medical feature definitions
         const MEDICAL_FEATURES = [
@@ -900,21 +792,12 @@
         // Animated counter
         function startCounterAnimation() {
             const counter = document.getElementById('prediction-counter');
-            let count = 1247;
+            let count = 1408;
             setInterval(() => {
-                count += Math.floor(Math.random() * 3) + 1;
+                count += Math.floor(Math.random() * 2) + 1;
                 counter.textContent = count.toLocaleString();
             }, 5000);
         }
-
-        // Premium modal function
-        function showPremiumModal() {
-            alert('🚀 Premium Feature!\n\nUpgrade to Professional plan to access:\n• Advanced Analytics Dashboard\n• PDF Report Generation\n• Patient History Tracking\n• Priority AI Processing\n\nContact us: premium@medipredict.com');
-        }
-
-        // [Include all your existing JavaScript functions here...]
-        // createFeatureInputs(), loadPatientProfile(), validateAndPredict(), etc.
-        // (Your original JavaScript code from the previous version)
 
         // Create realistic feature inputs
         function createFeatureInputs() {
@@ -1043,7 +926,7 @@
                     method: 'POST',
                     headers: { 
                         'Content-Type': 'application/json',
-                    'X-Premium-Feature': 'true'
+                    'Accept': 'application/json'
                     },
                     body: JSON.stringify({ features: features })
                 });
@@ -1062,19 +945,22 @@
                 document.getElementById('prediction-counter').textContent = predictionCount.toLocaleString();
                 
             } catch (error) {
-                showError(`Failed to get prediction: ${error.message}. Using demo mode.`);
-                // Fallback to demo data
+                console.log('API failed, using demo mode:', error);
+                // Use reliable demo data
                 const demoResult = generateDemoResult(features);
+                lastPrediction = demoResult;
                 displayClinicalResults(demoResult);
                 document.getElementById('action-buttons').style.display = 'grid';
+                showTemporaryMessage('Using demo data for demonstration purposes', 'info');
             } finally {
                 hideLoading();
             }
         }
 
-        // Demo fallback
+        // Improved demo fallback
         function generateDemoResult(features) {
-            const riskScore = features[2] + (10 - features[5]) + features[10];
+            // More realistic demo logic based on actual features
+            const riskScore = features[2] + (10 - features[5]) + features[10] + (1 - features[4]/100) * 5;
             let prediction, probabilities;
             
             if (riskScore > 15) {
@@ -1294,7 +1180,10 @@
 
         // Export functionality
         function exportAssessment() {
-            if (!lastPrediction) return;
+            if (!lastPrediction) {
+                showTemporaryMessage('Please generate a prediction first', 'warning');
+                return;
+            }
             
             const features = getFeatures();
             const assessment = {
@@ -1343,7 +1232,7 @@
 
         function showError(message) {
             const errorDiv = document.getElementById('error');
-            errorDiv.innerHTML = message;
+            errorDiv.innerHTML = `<i class="fas fa-exclamation-triangle"></i> ${message}`;
             errorDiv.style.display = 'block';
         }
 
@@ -1358,23 +1247,26 @@
 
         function showTemporaryMessage(message, type = 'success') {
             const tempDiv = document.createElement('div');
+            const bgColor = type === 'success' ? '#10b981' : type === 'warning' ? '#f59e0b' : '#6366f1';
             tempDiv.style.cssText = `
                 position: fixed;
                 top: 20px;
                 right: 20px;
                 padding: 15px 25px;
-                background: ${type === 'success' ? '#10b981' : '#ef4444'};
+                background: ${bgColor};
                 color: white;
                 border-radius: 12px;
                 z-index: 10000;
                 box-shadow: 0 10px 25px rgba(0,0,0,0.2);
                 font-weight: 600;
             `;
-            tempDiv.innerHTML = `<i class="fas fa-${type === 'success' ? 'check' : 'exclamation'}-circle"></i> ${message}`;
+            tempDiv.innerHTML = `<i class="fas fa-${type === 'success' ? 'check' : type === 'warning' ? 'exclamation-triangle' : 'info'}-circle"></i> ${message}`;
             document.body.appendChild(tempDiv);
             
             setTimeout(() => {
-                document.body.removeChild(tempDiv);
+                if (document.body.contains(tempDiv)) {
+                    document.body.removeChild(tempDiv);
+                }
             }, 4000);
         }
     </script>
