@@ -1,0 +1,1015 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medication Adherence Clinical Assessment</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --success: #27ae60;
+            --warning: #f39c12;
+            --danger: #e74c3c;
+            --light: #ecf0f1;
+            --dark: #2c3e50;
+            --gray: #95a5a6;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 1.1em;
+        }
+
+        .content {
+            padding: 30px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+
+        @media (max-width: 768px) {
+            .content {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .section {
+            background: var(--light);
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .section h2 {
+            color: var(--primary);
+            margin-bottom: 20px;
+            font-size: 1.5em;
+            border-bottom: 2px solid var(--secondary);
+            padding-bottom: 10px;
+        }
+
+        .patient-section {
+            grid-column: 1 / -1;
+        }
+
+        .profile-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .btn-primary {
+            background: var(--secondary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #219a52;
+        }
+
+        .btn-warning {
+            background: var(--warning);
+            color: white;
+        }
+
+        .btn-warning:hover {
+            background: #e67e22;
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c0392b;
+        }
+
+        .btn-secondary {
+            background: var(--gray);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #7f8c8d;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .feature-input-group {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+        }
+
+        .feature-label {
+            font-weight: 600;
+            color: var(--primary);
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .range-hint {
+            font-size: 0.8em;
+            color: var(--gray);
+            font-weight: normal;
+            display: block;
+        }
+
+        .feature-input {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .feature-input:focus {
+            outline: none;
+            border-color: var(--secondary);
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
+
+        .input-help {
+            font-size: 0.8em;
+            color: var(--gray);
+            margin-top: 5px;
+            font-style: italic;
+        }
+
+        .patient-profile {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid var(--secondary);
+            margin-bottom: 15px;
+        }
+
+        .clinical-alert {
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid;
+        }
+
+        .alert-high {
+            background: #ffeaea;
+            border-color: var(--danger);
+        }
+
+        .alert-medium {
+            background: #fff3cd;
+            border-color: var(--warning);
+        }
+
+        .alert-low {
+            background: #e8f5e8;
+            border-color: var(--success);
+        }
+
+        .confidence-display {
+            margin: 20px 0;
+        }
+
+        .confidence-bar {
+            background: #ecf0f1;
+            border-radius: 10px;
+            height: 20px;
+            margin: 10px 0;
+            overflow: hidden;
+        }
+
+        .confidence-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--danger), var(--warning), var(--success));
+            border-radius: 10px;
+            transition: width 1s ease;
+        }
+
+        .confidence-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9em;
+            color: var(--gray);
+        }
+
+        .probability-breakdown {
+            margin-top: 25px;
+        }
+
+        .probability-item {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            border-left: 4px solid;
+        }
+
+        .probability-item.high { border-color: var(--danger); }
+        .probability-item.medium { border-color: var(--warning); }
+        .probability-item.low { border-color: var(--success); }
+
+        .probability-label {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .probability-value {
+            font-size: 1.2em;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .probability-bar {
+            background: #ecf0f1;
+            height: 8px;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .bar-fill {
+            height: 100%;
+            transition: width 1s ease;
+        }
+
+        .bar-fill.high { background: var(--danger); }
+        .bar-fill.medium { background: var(--warning); }
+        .bar-fill.low { background: var(--success); }
+
+        .clinical-recommendations {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            margin-top: 20px;
+        }
+
+        .clinical-recommendations ul {
+            margin-left: 20px;
+            margin-top: 10px;
+        }
+
+        .clinical-recommendations li {
+            margin-bottom: 8px;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 40px;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid var(--secondary);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .error {
+            background: var(--danger);
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            display: none;
+        }
+
+        .action-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .risk-indicator {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+
+        .risk-high { background: var(--danger); color: white; }
+        .risk-medium { background: var(--warning); color: white; }
+        .risk-low { background: var(--success); color: white; }
+
+        .feature-validation {
+            font-size: 0.8em;
+            margin-top: 3px;
+        }
+
+        .valid { color: var(--success); }
+        .invalid { color: var(--danger); }
+
+        .results-section {
+            grid-column: 1 / -1;
+        }
+
+        .prediction-result {
+            font-size: 1.4em;
+            font-weight: bold;
+            margin: 15px 0;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .high { color: var(--danger); }
+        .medium { color: var(--warning); }
+        .low { color: var(--success); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏥 Medication Adherence Clinical Assessment</h1>
+            <p>AI-Powered Risk Assessment for Medication Adherence Prediction</p>
+        </div>
+
+        <div class="content">
+            <!-- Patient Information Section -->
+            <div class="patient-section section">
+                <h2>👤 Patient Information & Profiles</h2>
+                <div class="patient-profile">
+                    <div class="profile-info">
+                        <strong>Current Profile:</strong> 
+                        <span id="current-profile">No profile loaded</span>
+                    </div>
+                    <div class="profile-description" id="profile-description">
+                        Select a sample profile or enter custom patient data
+                    </div>
+                </div>
+                
+                <div class="profile-buttons">
+                    <button class="btn btn-danger" onclick="loadPatientProfile('highRisk')">
+                        🚨 High-Risk Patient
+                    </button>
+                    <button class="btn btn-warning" onclick="loadPatientProfile('mediumRisk')">
+                        ⚠️ Medium-Risk Patient  
+                    </button>
+                    <button class="btn btn-success" onclick="loadPatientProfile('lowRisk')">
+                        ✅ Low-Risk Patient
+                    </button>
+                    <button class="btn btn-secondary" onclick="clearPatientData()">
+                        🗑️ Clear All Data
+                    </button>
+                </div>
+            </div>
+
+            <!-- Clinical Assessment Section -->
+            <div class="section">
+                <h2>📋 Clinical Assessment Parameters</h2>
+                <p>Enter patient clinical data for adherence risk assessment:</p>
+                
+                <div class="feature-grid" id="feature-inputs">
+                    <!-- Feature inputs will be generated here -->
+                </div>
+
+                <div class="action-buttons">
+                    <button class="btn btn-primary" onclick="validateAndPredict()">
+                        🔮 Predict Adherence Risk
+                    </button>
+                    <button class="btn btn-secondary" onclick="validateAllInputs()">
+                        ✅ Validate Inputs
+                    </button>
+                </div>
+            </div>
+
+            <!-- Risk Factors Section -->
+            <div class="section">
+                <h2>⚠️ Key Risk Factors</h2>
+                <div id="risk-factors">
+                    <div class="risk-item">
+                        <strong>High-Risk Indicators:</strong>
+                        <ul>
+                            <li>Multiple chronic conditions</li>
+                            <li>Low social support</li>
+                            <li>Complex medication regimen</li>
+                            <li>Limited health literacy</li>
+                        </ul>
+                    </div>
+                    <div class="risk-item">
+                        <strong>Protective Factors:</strong>
+                        <ul>
+                            <li>Strong social support</li>
+                            <li>High health literacy</li>
+                            <li>Simple medication schedule</li>
+                            <li>Regular follow-ups</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Loading State -->
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p>Analyzing patient data and calculating adherence risk...</p>
+            </div>
+
+            <!-- Error Display -->
+            <div class="error" id="error"></div>
+
+            <!-- Results Section -->
+            <div class="results-section section" id="result" style="display: none;">
+                <!-- Results will be displayed here -->
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="section action-buttons" id="action-buttons" style="display: none;">
+                <button class="btn btn-primary" onclick="exportAssessment()">
+                    💾 Export Assessment Report
+                </button>
+                <button class="btn btn-secondary" onclick="startNewAssessment()">
+                    🆕 New Assessment
+                </button>
+                <button class="btn btn-secondary" onclick="printAssessment()">
+                    🖨️ Print Report
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = "https://medication-adherence-api.onrender.com";
+        let lastPrediction = null;
+
+        // Realistic medical feature definitions
+        const MEDICAL_FEATURES = [
+            "Age (normalized 0-1)",
+            "Gender (0: Female, 1: Male)",
+            "Chronic Conditions Count (0-5)", 
+            "Medication Complexity Score (0-10)",
+            "Previous Adherence Rate (0-100%)",
+            "Social Support Level (0-10)",
+            "Education Level (0-10)",
+            "Income Bracket (0-10)",
+            "Distance to Pharmacy (km, 0-50)",
+            "Follow-up Frequency (visits/year, 0-12)",
+            "Side Effects Severity (0-10)",
+            "Cognitive Function Score (0-30)",
+            "Health Literacy Score (0-10)"
+        ];
+
+        const FEATURE_RANGES = {
+            0: [0, 1],      // Age normalized
+            1: [0, 1],      // Gender
+            2: [0, 5],      // Chronic conditions
+            3: [0, 10],     // Medication complexity
+            4: [0, 100],    // Previous adherence %
+            5: [0, 10],     // Social support
+            6: [0, 10],     // Education
+            7: [0, 10],     // Income
+            8: [0, 50],     // Distance to pharmacy
+            9: [0, 12],     // Follow-ups per year
+            10: [0, 10],    // Side effects
+            11: [0, 30],    // Cognitive function
+            12: [0, 10]     // Health literacy
+        };
+
+        const FEATURE_DESCRIPTIONS = [
+            "Patient age normalized to 0-1 scale (0=young, 1=elderly)",
+            "Biological sex (0 = Female, 1 = Male)",
+            "Number of diagnosed chronic conditions (e.g., diabetes, hypertension)",
+            "Complexity of medication regimen considering dosage frequency and interactions",
+            "Historical medication adherence percentage based on previous records",
+            "Availability of family/friend support for medication management",
+            "Highest education level completed (0=no formal, 10=postgraduate)",
+            "Socioeconomic status indicator (0=lowest, 10=highest)",
+            "Distance to nearest pharmacy in kilometers",
+            "Number of scheduled healthcare follow-up visits per year",
+            "Severity of experienced medication side effects",
+            "Cognitive assessment score (MMSE equivalent, 0-30)",
+            "Health literacy and medication understanding assessment"
+        ];
+
+        // Realistic sample patient profiles
+        const SAMPLE_PATIENTS = {
+            highRisk: {
+                name: "High-Risk Patient Profile",
+                features: [0.8, 0, 4, 8, 45, 2, 4, 3, 25, 2, 7, 18, 3],
+                description: "Elderly female with multiple chronic conditions, limited social support, complex medication regimen, and low health literacy. High risk for non-adherence.",
+                riskFactors: ["Multiple comorbidities", "Low social support", "Complex medications", "Limited health literacy"]
+            },
+            mediumRisk: {
+                name: "Medium-Risk Patient Profile", 
+                features: [0.5, 1, 2, 5, 65, 6, 7, 6, 8, 6, 3, 24, 6],
+                description: "Middle-aged male with moderate chronic conditions, adequate social support, and average health literacy. Moderate adherence risk requiring monitoring.",
+                riskFactors: ["Moderate comorbidities", "Adequate support", "Manageable medications"]
+            },
+            lowRisk: {
+                name: "Low-Risk Patient Profile",
+                features: [0.3, 1, 1, 3, 92, 9, 9, 8, 2, 12, 1, 28, 9],
+                description: "Young patient with minimal chronic conditions, strong social support system, high health literacy, and excellent historical adherence.",
+                riskFactors: ["Minimal comorbidities", "Strong support system", "High health literacy"]
+            }
+        };
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', function() {
+            createFeatureInputs();
+            loadPatientProfile('mediumRisk'); // Load medium risk by default
+        });
+
+        // Create realistic feature inputs
+        function createFeatureInputs() {
+            const container = document.getElementById('feature-inputs');
+            container.innerHTML = '';
+            
+            MEDICAL_FEATURES.forEach((feature, index) => {
+                const inputGroup = document.createElement('div');
+                inputGroup.className = 'feature-input-group';
+                inputGroup.innerHTML = `
+                    <label for="feature-${index}" class="feature-label">
+                        ${feature}
+                        <span class="range-hint">Range: ${FEATURE_RANGES[index][0]} - ${FEATURE_RANGES[index][1]}</span>
+                    </label>
+                    <input 
+                        type="number" 
+                        class="feature-input" 
+                        id="feature-${index}" 
+                        placeholder="Enter value"
+                        min="${FEATURE_RANGES[index][0]}"
+                        max="${FEATURE_RANGES[index][1]}"
+                        step="0.1"
+                        oninput="validateSingleInput(${index})"
+                    >
+                    <div class="input-help">${FEATURE_DESCRIPTIONS[index]}</div>
+                    <div class="feature-validation" id="validation-${index}"></div>
+                `;
+                container.appendChild(inputGroup);
+            });
+        }
+
+        // Load patient profile
+        function loadPatientProfile(profileType) {
+            const patient = SAMPLE_PATIENTS[profileType];
+            if (!patient) return;
+
+            patient.features.forEach((value, index) => {
+                const input = document.getElementById(`feature-${index}`);
+                if (input) {
+                    input.value = value;
+                    validateSingleInput(index);
+                }
+            });
+            
+            // Update profile display
+            document.getElementById('current-profile').textContent = patient.name;
+            document.getElementById('profile-description').textContent = patient.description;
+            
+            // Clear previous results
+            hideResult();
+        }
+
+        // Clear all patient data
+        function clearPatientData() {
+            for (let i = 0; i < 13; i++) {
+                const input = document.getElementById(`feature-${i}`);
+                if (input) {
+                    input.value = '';
+                    document.getElementById(`validation-${i}`).textContent = '';
+                }
+            }
+            document.getElementById('current-profile').textContent = 'No profile loaded';
+            document.getElementById('profile-description').textContent = 'Select a sample profile or enter custom patient data';
+            hideResult();
+        }
+
+        // Validate single input
+        function validateSingleInput(index) {
+            const input = document.getElementById(`feature-${index}`);
+            const validation = document.getElementById(`validation-${index}`);
+            const value = parseFloat(input.value);
+            const range = FEATURE_RANGES[index];
+            
+            if (isNaN(value)) {
+                validation.textContent = 'Please enter a valid number';
+                validation.className = 'feature-validation invalid';
+                return false;
+            }
+            
+            if (value < range[0] || value > range[1]) {
+                validation.textContent = `Value must be between ${range[0]} and ${range[1]}`;
+                validation.className = 'feature-validation invalid';
+                return false;
+            }
+            
+            validation.textContent = '✓ Valid';
+            validation.className = 'feature-validation valid';
+            return true;
+        }
+
+        // Validate all inputs
+        function validateAllInputs() {
+            let allValid = true;
+            for (let i = 0; i < 13; i++) {
+                if (!validateSingleInput(i)) {
+                    allValid = false;
+                }
+            }
+            
+            if (allValid) {
+                showTemporaryMessage('All inputs are valid! Ready for prediction.', 'success');
+            } else {
+                showError('Please fix validation errors before predicting.');
+            }
+            
+            return allValid;
+        }
+
+        // Main prediction function
+        function validateAndPredict() {
+            if (!validateAllInputs()) {
+                return;
+            }
+
+            const features = getFeatures();
+            predictAdherence(features);
+        }
+
+        async function predictAdherence(features) {
+            showLoading();
+            hideError();
+            hideResult();
+
+            try {
+                const response = await fetch(`${API_URL}/predict`, {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ features: features })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`API error: ${response.status}`);
+                }
+
+                const result = await response.json();
+                lastPrediction = result;
+                displayClinicalResults(result);
+                document.getElementById('action-buttons').style.display = 'grid';
+                
+            } catch (error) {
+                showError(`Failed to get prediction: ${error.message}. Please check your internet connection and try again.`);
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // Get feature values from inputs
+        function getFeatures() {
+            const features = [];
+            for (let i = 0; i < 13; i++) {
+                const input = document.getElementById(`feature-${i}`);
+                const value = input ? parseFloat(input.value) : 0;
+                features.push(isNaN(value) ? 0 : value);
+            }
+            return features;
+        }
+
+        // Display comprehensive clinical results
+        function displayClinicalResults(data) {
+            const resultDiv = document.getElementById('result');
+            const prediction = data.predictions[0];
+            const probabilities = data.probabilities[0];
+            const classProbs = data.class_probabilities[0];
+            
+            // Find the highest probability
+            const maxProbIndex = probabilities.indexOf(Math.max(...probabilities));
+            const confidence = (probabilities[maxProbIndex] * 100).toFixed(1);
+
+            resultDiv.innerHTML = `
+                <h2>📊 Clinical Assessment Results</h2>
+                
+                <div class="clinical-alert ${getAlertLevel(prediction)}">
+                    <h3>${getAlertTitle(prediction)}</h3>
+                    <p>${getClinicalInterpretation(prediction)}</p>
+                </div>
+                
+                <div class="prediction-result">
+                    <strong>Adherence Risk Level:</strong> 
+                    <span class="${getPredictionClass(prediction)}">${prediction}</span>
+                    <span class="risk-indicator ${getRiskClass(prediction)}">${getRiskLevel(prediction)} RISK</span>
+                </div>
+                
+                <div class="confidence-display">
+                    <h4>Model Confidence: ${confidence}%</h4>
+                    <div class="confidence-bar">
+                        <div class="confidence-fill" style="width: ${confidence}%"></div>
+                    </div>
+                    <div class="confidence-labels">
+                        <span>Low Confidence</span>
+                        <span>Assessment Reliability</span>
+                        <span>High Confidence</span>
+                    </div>
+                </div>
+
+                <div class="probability-breakdown">
+                    <h4>🔍 Detailed Probability Analysis:</h4>
+                    <div class="probability-item high">
+                        <div class="probability-label">HIGH NON-ADHERENT RISK</div>
+                        <div class="probability-value">${(classProbs['HIGH NON-ADHERENT'] * 100).toFixed(1)}%</div>
+                        <div class="probability-bar">
+                            <div class="bar-fill high" style="width: ${classProbs['HIGH NON-ADHERENT'] * 100}%"></div>
+                        </div>
+                    </div>
+                    <div class="probability-item medium">
+                        <div class="probability-label">MEDIUM ADHERENT RISK</div>
+                        <div class="probability-value">${(classProbs['MEDIUM ADHERENT'] * 100).toFixed(1)}%</div>
+                        <div class="probability-bar">
+                            <div class="bar-fill medium" style="width: ${classProbs['MEDIUM ADHERENT'] * 100}%"></div>
+                        </div>
+                    </div>
+                    <div class="probability-item low">
+                        <div class="probability-label">LOW ADHERENT RISK</div>
+                        <div class="probability-value">${(classProbs['LOW ADHERENT'] * 100).toFixed(1)}%</div>
+                        <div class="probability-bar">
+                            <div class="bar-fill low" style="width: ${classProbs['LOW ADHERENT'] * 100}%"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="clinical-recommendations">
+                    <h4>📋 Clinical Recommendations & Intervention Strategy:</h4>
+                    ${getClinicalRecommendations(prediction)}
+                </div>
+
+                <div class="clinical-recommendations">
+                    <h4>📈 Monitoring & Follow-up Plan:</h4>
+                    ${getMonitoringPlan(prediction)}
+                </div>
+            `;
+
+            resultDiv.style.display = 'block';
+        }
+
+        // Helper functions for clinical display
+        function getAlertLevel(prediction) {
+            if (prediction.includes('HIGH')) return 'alert-high';
+            if (prediction.includes('MEDIUM')) return 'alert-medium';
+            return 'alert-low';
+        }
+
+        function getAlertTitle(prediction) {
+            const titles = {
+                'HIGH NON-ADHERENT': '🚨 High Risk - Immediate Intervention Recommended',
+                'MEDIUM ADHERENT': '⚠️ Moderate Risk - Enhanced Monitoring Required',
+                'LOW ADHERENT': '✅ Low Risk - Routine Monitoring Sufficient'
+            };
+            return titles[prediction] || 'Clinical Assessment Complete';
+        }
+
+        function getClinicalInterpretation(prediction) {
+            const interpretations = {
+                'HIGH NON-ADHERENT': 'This patient demonstrates multiple high-risk factors for medication non-adherence. Immediate clinical intervention and close monitoring are strongly recommended to prevent adverse health outcomes.',
+                'MEDIUM ADHERENT': 'This patient shows moderate risk for adherence issues. Enhanced monitoring and targeted interventions are recommended to maintain and improve medication adherence.',
+                'LOW ADHERENT': 'This patient exhibits strong protective factors and low risk for adherence issues. Continue current management with routine follow-up assessments.'
+            };
+            return interpretations[prediction] || 'Clinical assessment complete. Review individual risk factors for detailed analysis.';
+        }
+
+        function getPredictionClass(prediction) {
+            if (prediction.includes('HIGH')) return 'high';
+            if (prediction.includes('MEDIUM')) return 'medium';
+            return 'low';
+        }
+
+        function getRiskClass(prediction) {
+            if (prediction.includes('HIGH')) return 'risk-high';
+            if (prediction.includes('MEDIUM')) return 'risk-medium';
+            return 'risk-low';
+        }
+
+        function getRiskLevel(prediction) {
+            if (prediction.includes('HIGH')) return 'HIGH';
+            if (prediction.includes('MEDIUM')) return 'MEDIUM';
+            return 'LOW';
+        }
+
+        function getClinicalRecommendations(prediction) {
+            const recommendations = {
+                'HIGH NON-ADHERENT': `
+                    <ul>
+                        <li><strong>Immediate Actions:</strong> Schedule urgent follow-up within 1 week</li>
+                        <li><strong>Medication Management:</strong> Simplify regimen if possible, provide pill organizers</li>
+                        <li><strong>Patient Education:</strong> Comprehensive medication education session</li>
+                        <li><strong>Support Services:</strong> Refer to social work and pharmacy services</li>
+                        <li><strong>Monitoring:</strong> Weekly phone check-ins for first month</li>
+                        <li><strong>Technology:</strong> Implement medication reminder system</li>
+                    </ul>
+                `,
+                'MEDIUM ADHERENT': `
+                    <ul>
+                        <li><strong>Follow-up:</strong> Schedule appointment within 2-4 weeks</li>
+                        <li><strong>Education:</strong> Targeted medication education</li>
+                        <li><strong>Tools:</strong> Provide medication schedule and pill organizer</li>
+                        <li><strong>Monitoring:</strong> Bi-weekly check-ins for first 2 months</li>
+                        <li><strong>Assessment:</strong> Re-evaluate in 3 months</li>
+                    </ul>
+                `,
+                'LOW ADHERENT': `
+                    <ul>
+                        <li><strong>Routine Care:</strong> Continue current management plan</li>
+                        <li><strong>Reinforcement:</strong> Positive reinforcement of good habits</li>
+                        <li><strong>Annual Review:</strong> Annual adherence assessment</li>
+                        <li><strong>Prevention:</strong> Monitor for any changes in risk factors</li>
+                    </ul>
+                `
+            };
+            return recommendations[prediction] || '<p>Individualized clinical recommendations required based on comprehensive assessment.</p>';
+        }
+
+        function getMonitoringPlan(prediction) {
+            const plans = {
+                'HIGH NON-ADHERENT': `
+                    <ul>
+                        <li><strong>Week 1-4:</strong> Weekly clinical contact</li>
+                        <li><strong>Month 2-3:</strong> Bi-weekly monitoring</li>
+                        <li><strong>Month 4-6:</strong> Monthly assessments</li>
+                        <li><strong>Ongoing:</strong> Quarterly reviews</li>
+                        <li><strong>Metrics:</strong> Pill count, self-report, clinical outcomes</li>
+                    </ul>
+                `,
+                'MEDIUM ADHERENT': `
+                    <ul>
+                        <li><strong>Month 1-2:</strong> Bi-weekly check-ins</li>
+                        <li><strong>Month 3-6:</strong> Monthly assessments</li>
+                        <li><strong>Ongoing:</strong> Quarterly reviews</li>
+                        <li><strong>Metrics:</strong> Self-report and clinical indicators</li>
+                    </ul>
+                `,
+                'LOW ADHERENT': `
+                    <ul>
+                        <li><strong>Routine:</strong> 6-month and annual reviews</li>
+                        <li><strong>Monitoring:</strong> Annual comprehensive assessment</li>
+                        <li><strong>Metrics:</strong> Annual adherence screening</li>
+                    </ul>
+                `
+            };
+            return plans[prediction] || '<p>Individualized monitoring plan required.</p>';
+        }
+
+        // Export functionality
+        function exportAssessment() {
+            if (!lastPrediction) return;
+            
+            const features = getFeatures();
+            const assessment = {
+                timestamp: new Date().toISOString(),
+                patientProfile: document.getElementById('current-profile').textContent,
+                clinicalData: features.map((value, index) => ({
+                    parameter: MEDICAL_FEATURES[index],
+                    value: value,
+                    range: FEATURE_RANGES[index]
+                })),
+                prediction: lastPrediction,
+                recommendations: getClinicalRecommendations(lastPrediction.predictions[0]),
+                monitoringPlan: getMonitoringPlan(lastPrediction.predictions[0])
+            };
+            
+            const dataStr = JSON.stringify(assessment, null, 2);
+            const dataBlob = new Blob([dataStr], {type: 'application/json'});
+            
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(dataBlob);
+            link.download = `adherence-assessment-${new Date().getTime()}.json`;
+            link.click();
+            
+            showTemporaryMessage('Assessment report exported successfully!', 'success');
+        }
+
+        // Print functionality
+        function printAssessment() {
+            window.print();
+        }
+
+        // Start new assessment
+        function startNewAssessment() {
+            clearPatientData();
+            showTemporaryMessage('New assessment started. Please enter patient data.', 'success');
+        }
+
+        // UI helper functions
+        function showLoading() {
+            document.getElementById('loading').style.display = 'block';
+        }
+
+        function hideLoading() {
+            document.getElementById('loading').style.display = 'none';
+        }
+
+        function showError(message) {
+            const errorDiv = document.getElementById('error');
+            errorDiv.innerHTML = message;
+            errorDiv.style.display = 'block';
+        }
+
+        function hideError() {
+            document.getElementById('error').style.display = 'none';
+        }
+
+        function hideResult() {
+            document.getElementById('result').style.display = 'none';
+            document.getElementById('action-buttons').style.display = 'none';
+        }
+
+        function showTemporaryMessage(message, type = 'success') {
+            const tempDiv = document.createElement('div');
+            tempDiv.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                padding: 15px 20px;
+                background: ${type === 'success' ? '#27ae60' : '#e74c3c'};
+                color: white;
+                border-radius: 5px;
+                z-index: 1000;
+                box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            `;
+            tempDiv.textContent = message;
+            document.body.appendChild(tempDiv);
+            
+            setTimeout(() => {
+                document.body.removeChild(tempDiv);
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
