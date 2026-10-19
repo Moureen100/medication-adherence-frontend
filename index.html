@@ -364,7 +364,7 @@ function render() {
     <div class="clinical-alert ${r.alert}">
       <div class="prediction-result ${r.cls}">${last.label}<span class="risk-indicator ${r.badge}">${r.label}</span></div>
       <div class="confidence-display"><strong>Model confidence: ${conf}%</strong>
-        <div class="confidence-bar"><div class="confidence-fill" style="width:${conf}%"></div></div></div>
+        <div class="confidence-bar"><div class="confidence-fill" style="width:${conf}%"></div></div>${conf < 60 ? '<p class="muted">Low confidence: the model is split between classes for this patient.</p>' : ""}</div>
     </div>
     <div class="probability-breakdown"><h3 style="margin-bottom:12px">Class probabilities</h3>
       ${entries.map(([k, p]) => { const c = (RISK[k] || {}).cls || "medium";
@@ -373,7 +373,7 @@ function render() {
     <div class="risk-item" style="margin-top:16px"><strong><i class="fas fa-list-check"></i> Suggested focus areas</strong>
       <ul>${r.recs.map(x => `<li>${x}</li>`).join("")}</ul></div>
     <div class="risk-item"><strong><i class="fas fa-magnifying-glass-chart"></i> Why this result</strong>
-      <p class="muted">Which inputs move the model most. It shows how the model reacts, not proof of cause.</p><div id="why">Analyzing factors…</div></div>
+      <p class="muted">Effect of nudging each input by one standard deviation. It shows how the model reacts, not proof of cause.</p><div id="why">Analyzing factors…</div></div>
     <div class="risk-item"><strong><i class="fas fa-sliders"></i> What if these inputs change?</strong><div id="whatif"></div></div>
     <div class="risk-item"><strong><i class="fas fa-comment-sms"></i> Reminder message (edit before sending)</strong>
       <textarea id="msg" rows="3" class="feature-input" style="margin:8px 0"></textarea>
@@ -442,16 +442,16 @@ function whatIf(i, v) {
 
 async function explain() {
   const rows = [last.features];
-  FEATURES.forEach((f, i) => [f.min, f.max].forEach(v => { const r = last.features.slice(); r[i] = v; rows.push(r); }));
+  FEATURES.forEach((f, i) => [-1, 1].forEach(dv => { const r = last.features.slice(); r[i] = +Math.max(f.min, Math.min(f.max, r[i] + dv)).toFixed(2); rows.push(r); }));
   const d = await post("/batch_predict", {features: rows});
   const labels = Object.keys(d.detailed_results[0].all_probabilities);
   if (!labels.includes(HI)) { $("why").textContent = "Class label " + HI + " not found. API labels: " + labels.join(", "); return []; }
   const P = k => d.detailed_results[k].all_probabilities[HI], base = P(0);
   const top = MODIFIABLE.map(i => { const lo = P(1 + 2 * i) - base, hi = P(2 + 2 * i) - base;
-      const b = Math.abs(lo) >= Math.abs(hi) ? {v: FEATURES[i].min, d: lo} : {v: FEATURES[i].max, d: hi};
+      const b = Math.abs(lo) >= Math.abs(hi) ? {v: rows[1 + 2 * i][i], d: lo} : {v: rows[2 + 2 * i][i], d: hi};
       return {i, n: FEATURES[i].n, ...b}; })
     .filter(t => Math.abs(t.d) >= 0.001).sort((a, b) => Math.abs(b.d) - Math.abs(a.d)).slice(0, 4);
-  if (!top.length) { $("why").innerHTML = "<p class='muted'>No single factor moves this result. The model is almost certain about this patient (high-risk probability " + (base * 100).toFixed(2) + "%), even when each input is pushed to its extreme.</p>"; return []; }
+  if (!top.length) { $("why").innerHTML = "<p class='muted'>No single factor moves this result. The model is almost certain about this patient (high-risk probability " + (base * 100).toFixed(2) + "%), even when each input is nudged by one standard deviation.</p>"; return []; }
   $("why").innerHTML = top.map(t => { const pts = (t.d * 100).toFixed(1), up = t.d > 0;
     return `<div class="probability-item ${up ? "high" : "low"}"><strong>${t.n}</strong>: setting it to ${t.v} would ${up ? "raise" : "lower"} the high-risk probability by ${Math.abs(pts)} points</div>`; }).join("");
   return top.map(t => t.i);
