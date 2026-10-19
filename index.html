@@ -438,11 +438,14 @@ async function explain() {
   const rows = [last.features];
   FEATURES.forEach((f, i) => [f.min, f.max].forEach(v => { const r = last.features.slice(); r[i] = v; rows.push(r); }));
   const d = await post("/batch_predict", {features: rows});
-  const P = k => d.detailed_results[k].all_probabilities[HI] || 0, base = P(0);
+  const labels = Object.keys(d.detailed_results[0].all_probabilities);
+  if (!labels.includes(HI)) { $("why").textContent = "Class label " + HI + " not found. API labels: " + labels.join(", "); return; }
+  const P = k => d.detailed_results[k].all_probabilities[HI], base = P(0);
   const top = MODIFIABLE.map(i => { const lo = P(1 + 2 * i) - base, hi = P(2 + 2 * i) - base;
       const b = Math.abs(lo) >= Math.abs(hi) ? {v: FEATURES[i].min, d: lo} : {v: FEATURES[i].max, d: hi};
       return {n: FEATURES[i].n, ...b}; })
-    .sort((a, b) => Math.abs(b.d) - Math.abs(a.d)).slice(0, 4);
+    .filter(t => Math.abs(t.d) >= 0.001).sort((a, b) => Math.abs(b.d) - Math.abs(a.d)).slice(0, 4);
+  if (!top.length) { $("why").innerHTML = "<p class='muted'>No single factor moves this result. The model is almost certain about this patient (high-risk probability " + (base * 100).toFixed(2) + "%), even when each input is pushed to its extreme.</p>"; return; }
   $("why").innerHTML = top.map(t => { const pts = (t.d * 100).toFixed(1), up = t.d > 0;
     return `<div class="probability-item ${up ? "high" : "low"}"><strong>${t.n}</strong>: setting it to ${t.v} would ${up ? "raise" : "lower"} the high-risk probability by ${Math.abs(pts)} points</div>`; }).join("");
 }
