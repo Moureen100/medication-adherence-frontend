@@ -7,7 +7,7 @@
 - AI-powered medication adherence prediction
 - Professional clinical interface
 - Patient risk profiling
-- Export functionality
+- Export functionality.
 
 ## Connected API
 Backend: https://medication-adherence-api.onrender.com
