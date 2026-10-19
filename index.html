@@ -182,9 +182,9 @@ select.feature-input{appearance:auto}
   <div class="medical-hero">
     <canvas id="hero3d" aria-hidden="true"></canvas>
     <h2>Spot adherence risk before it becomes a missed dose</h2>
-    <p>Enter 13 patient factors and a neural network estimates how likely the patient is to follow their medication plan.</p>
+    <p>Enter 13 standardized patient features and a neural network estimates how likely the patient is to follow their medication plan.</p>
     <div class="medical-stats">
-      <div class="stat-item"><div class="stat-number">13</div><p>Clinical inputs</p></div>
+      <div class="stat-item"><div class="stat-number">13</div><p>Standardized inputs</p></div>
       <div class="stat-item"><div class="stat-number">3</div><p>Adherence classes</p></div>
       <div class="stat-item"><div class="stat-number">PyTorch</div><p>DAG neural network</p></div>
     </div>
@@ -198,15 +198,16 @@ select.feature-input{appearance:auto}
         <div class="profile-description" id="profile-description"></div>
       </div>
       <div class="profile-buttons">
-        <button class="btn btn-danger" onclick="loadPatientProfile('highRisk')"><i class="fas fa-procedures"></i> Sample: complex case</button>
-        <button class="btn btn-warning" onclick="loadPatientProfile('mediumRisk')"><i class="fas fa-user-md"></i> Sample: moderate case</button>
-        <button class="btn btn-success" onclick="loadPatientProfile('lowRisk')"><i class="fas fa-shield-alt"></i> Sample: supported case</button>
+        <button class="btn btn-secondary" onclick="loadPatientProfile('average')"><i class="fas fa-user"></i> Average patient</button>
+        <button class="btn btn-secondary" onclick="loadPatientProfile('row1')"><i class="fas fa-table"></i> Dataset row 1</button>
+        <button class="btn btn-secondary" onclick="loadPatientProfile('random')"><i class="fas fa-dice"></i> Random patient</button>
         <button class="btn btn-secondary" onclick="clearPatientData()"><i class="fas fa-eraser"></i> Clear</button>
       </div>
     </div>
 
     <div class="section" style="grid-column:1/-1">
       <h2><i class="fas fa-clipboard-list"></i> Assessment inputs</h2>
+      <p class="muted" style="margin:-4px 0 14px">The model was trained on 13 anonymized, standardized columns, so inputs are z-scores: 0 is the dataset average, +1 is one standard deviation above it.</p>
       <div class="feature-grid" id="feature-inputs"></div>
       <div class="action-buttons">
         <button class="btn btn-primary" onclick="predict()"><i class="fas fa-robot"></i> Predict adherence</button>
@@ -234,31 +235,31 @@ select.feature-input{appearance:auto}
 <script>
 const API_URL = "https://medication-adherence-api.onrender.com";
 
-// Order must match model_config.json feature_names
+// 13 anonymized, standardized columns from the training data (real meanings unknown)
 const FEATURES = [
-  {n:"Age (normalized)",           min:0, max:1,  step:.05, hint:"0 = young, 1 = elderly"},
-  {n:"Gender",                     min:0, max:1,  step:1,   hint:"0 = Female, 1 = Male", select:["Female","Male"]},
-  {n:"Chronic conditions",         min:0, max:5,  step:1,   hint:"Diagnosed count"},
-  {n:"Medication complexity",      min:0, max:10, step:1,   hint:"Dose frequency and interactions"},
-  {n:"Previous adherence (%)",     min:0, max:100,step:1,   hint:"From past records"},
-  {n:"Social support",             min:0, max:10, step:1,   hint:"Family or friend help"},
-  {n:"Education level",            min:0, max:10, step:1,   hint:"0 = none, 10 = postgraduate"},
-  {n:"Income bracket",             min:0, max:10, step:1,   hint:"0 = lowest, 10 = highest"},
-  {n:"Distance to pharmacy (km)",  min:0, max:50, step:1,   hint:"Nearest pharmacy"},
-  {n:"Follow-ups per year",        min:0, max:12, step:1,   hint:"Scheduled visits"},
-  {n:"Side-effect severity",       min:0, max:10, step:1,   hint:"Experienced severity"},
-  {n:"Cognitive score",            min:0, max:30, step:1,   hint:"MMSE-equivalent"},
-  {n:"Health literacy",            min:0, max:10, step:1,   hint:"Understanding of medication"}
+  {n:"Factor 1", min:-3, max:3, step:.01, hint:"Standardized (0 = dataset average)"},
+  {n:"Factor 2", min:-3, max:3, step:.01, hint:"Standardized (0 = dataset average)"},
+  {n:"Factor 3", min:-3, max:3, step:.01, hint:"Standardized (0 = dataset average)"},
+  {n:"Factor 4", min:-3, max:3, step:.01, hint:"Standardized (0 = dataset average)"},
+  {n:"Factor 5", min:-3, max:3, step:.01, hint:"Standardized (0 = dataset average)"},
+  {n:"Factor 6", min:-3, max:3, step:.01, hint:"Standardized (0 = dataset average)"},
+  {n:"Factor 7", min:-3, max:3, step:.01, hint:"Standardized (0 = dataset average)"},
+  {n:"Factor 8", min:-3, max:3, step:.01, hint:"Standardized (0 = dataset average)"},
+  {n:"Factor 9", min:-3, max:3, step:.01, hint:"Standardized (0 = dataset average)"},
+  {n:"Factor 10", min:-3, max:3, step:.01, hint:"Standardized (0 = dataset average)"},
+  {n:"Factor 11", min:-3, max:3, step:.01, hint:"Standardized (0 = dataset average)"},
+  {n:"Factor 12", min:-3, max:3, step:.01, hint:"Standardized (0 = dataset average)"},
+  {n:"Factor 13", min:-3, max:3, step:.01, hint:"Standardized (0 = dataset average)"}
 ];
 
 const PROFILES = {
-  highRisk:{name:"Complex case", f:[0.8,0,4,8,45,2,4,3,25,2,7,18,3],
-    d:"Older patient with several chronic conditions, limited support, a complex regimen and low health literacy."},
-  mediumRisk:{name:"Moderate case", f:[0.5,1,2,5,65,6,7,6,8,6,3,24,6],
-    d:"Middle-aged patient with moderate conditions, adequate support and average health literacy."},
-  lowRisk:{name:"Supported case", f:[0.3,1,1,3,92,9,9,8,2,12,1,28,9],
-    d:"Younger patient with few conditions, strong support, high health literacy and excellent past adherence."}
+  average:{name:"Average patient", f:[0,0,0,0,0,0,0,0,0,0,0,0,0],
+    d:"Every factor at the dataset average (standardized value 0)."},
+  row1:{name:"Dataset row 1", f:[1,0.49788,0.48246,-0.05921,0.96082,0.126,0.31287,-0.57545,-0.58331,-0.91699,-0.00665,-0.21712,-1.18084],
+    d:"A real row taken from the training file."},
+  random:{name:"Random patient", f:null, d:"Random standardized values (mostly between -2 and 2)."}
 };
+const randn = () => Math.sqrt(-2 * Math.log(1 - Math.random())) * Math.cos(2 * Math.PI * Math.random());
 
 // The model has no "fully adherent" class, so wording reflects its three outputs.
 const RISK = {
@@ -274,7 +275,7 @@ let last = null;
 const $ = id => document.getElementById(id);
 
 document.addEventListener("DOMContentLoaded", () => {
-  buildInputs(); loadPatientProfile("mediumRisk"); wakeApi(); initHero3D(); initTilt();
+  buildInputs(); loadPatientProfile("average"); wakeApi(); initHero3D(); initTilt();
 });
 
 async function wakeApi(attempts = 6) {
@@ -304,14 +305,15 @@ function buildInputs() {
 
 function loadPatientProfile(key) {
   const p = PROFILES[key];
-  p.f.forEach((v, i) => { $("f" + i).value = v; });
+  const vals = key === "random" ? FEATURES.map(() => +Math.max(-3, Math.min(3, randn())).toFixed(2)) : p.f;
+  vals.forEach((v, i) => { $("f" + i).value = v; });
   $("current-profile").textContent = p.name;
   $("profile-description").textContent = p.d;
   FEATURES.forEach((_, i) => validateOne(i));
 }
 
 function clearPatientData() {
-  FEATURES.forEach((_, i) => { $("f" + i).value = FEATURES[i].select ? 0 : ""; $("v" + i).textContent = ""; });
+  FEATURES.forEach((_, i) => { $("f" + i).value = ""; $("v" + i).textContent = ""; });
   $("current-profile").textContent = "Custom entry"; $("profile-description").textContent = "Enter values below.";
 }
 
@@ -371,8 +373,8 @@ function render() {
     <div class="risk-item" style="margin-top:16px"><strong><i class="fas fa-list-check"></i> Suggested focus areas</strong>
       <ul>${r.recs.map(x => `<li>${x}</li>`).join("")}</ul></div>
     <div class="risk-item"><strong><i class="fas fa-magnifying-glass-chart"></i> Why this result</strong>
-      <p class="muted">Model sensitivity for factors a care team can influence. It shows how the model reacts, not proof of cause.</p><div id="why">Analyzing factors…</div></div>
-    <div class="risk-item"><strong><i class="fas fa-sliders"></i> What if the care plan changes?</strong><div id="whatif"></div></div>
+      <p class="muted">Which inputs move the model most. It shows how the model reacts, not proof of cause.</p><div id="why">Analyzing factors…</div></div>
+    <div class="risk-item"><strong><i class="fas fa-sliders"></i> What if these inputs change?</strong><div id="whatif"></div></div>
     <div class="risk-item"><strong><i class="fas fa-comment-sms"></i> Reminder message (edit before sending)</strong>
       <textarea id="msg" rows="3" class="feature-input" style="margin:8px 0"></textarea>
       <button class="btn btn-secondary" onclick="navigator.clipboard.writeText($('msg').value)"><i class="fas fa-copy"></i> Copy</button></div>
@@ -398,14 +400,14 @@ function exportAssessment() {
 
 function newAssessment() {
   $("result").style.display = "none"; $("action-buttons").style.display = "none";
-  loadPatientProfile("mediumRisk"); window.scrollTo({top:0, behavior:"smooth"});
+  loadPatientProfile("average"); window.scrollTo({top:0, behavior:"smooth"});
 }
 
 async function post(path, body) {
   const r = await fetch(API_URL + path, {method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(body)});
   const d = await r.json(); if (!r.ok) throw new Error(d.error || "Request failed"); return d;
 }
-const HI = "HIGH NON-ADHERENT", WHATIF = [5, 3, 9, 12], MODIFIABLE = [2,3,4,5,6,8,9,10,12];
+const HI = "HIGH NON-ADHERENT", MODIFIABLE = [0,1,2,3,4,5,6,7,8,9,10,11,12]; let WHATIF = [0, 1, 2, 3];
 const MSG = {
   "HIGH NON-ADHERENT":"Hello from your clinic. We would like to check in about your medicines. Please reply YES if you can visit this week, and tell us if cost, distance or side effects make them hard to take.",
   "LOW ADHERENT":"Hello from your clinic. A quick reminder to take your medicines as prescribed. If anything makes it hard, reply and we will help.",
@@ -414,10 +416,14 @@ const MSG = {
 
 function postRender() {
   $("msg").value = MSG[last.label] || MSG["LOW ADHERENT"];
+  $("whatif").textContent = "Finding the most influential inputs…";
+  explain().then(buildWhatIf).catch(e => { $("why").textContent = "Could not compute factors: " + e.message; buildWhatIf([]); });
+}
+function buildWhatIf(idx) {
+  WHATIF = idx.length ? idx : [0, 1, 2, 3];
   $("whatif").innerHTML = WHATIF.map(i => { const f = FEATURES[i];
-    return `<label class="wi"><span>${f.n}: <b id="wv${i}">${last.features[i]}</b></span><input id="wi${i}" type="range" min="${f.min}" max="${f.max}" step="${f.step}" value="${last.features[i]}" oninput="whatIf(${i}, this.value)"></label>`; }).join("") + '<div id="wi-out" class="muted"></div>';
+    return `<label class="wi"><span>${f.n}: <b id="wv${i}">${last.features[i]}</b></span><input id="wi${i}" type="range" min="${f.min}" max="${f.max}" step=".05" value="${last.features[i]}" oninput="whatIf(${i}, this.value)"></label>`; }).join("") + '<div id="wi-out" class="muted"></div>';
   whatIf();
-  explain().catch(e => { $("why").textContent = "Could not compute factors: " + e.message; });
 }
 
 let wiTimer;
@@ -439,15 +445,16 @@ async function explain() {
   FEATURES.forEach((f, i) => [f.min, f.max].forEach(v => { const r = last.features.slice(); r[i] = v; rows.push(r); }));
   const d = await post("/batch_predict", {features: rows});
   const labels = Object.keys(d.detailed_results[0].all_probabilities);
-  if (!labels.includes(HI)) { $("why").textContent = "Class label " + HI + " not found. API labels: " + labels.join(", "); return; }
+  if (!labels.includes(HI)) { $("why").textContent = "Class label " + HI + " not found. API labels: " + labels.join(", "); return []; }
   const P = k => d.detailed_results[k].all_probabilities[HI], base = P(0);
   const top = MODIFIABLE.map(i => { const lo = P(1 + 2 * i) - base, hi = P(2 + 2 * i) - base;
       const b = Math.abs(lo) >= Math.abs(hi) ? {v: FEATURES[i].min, d: lo} : {v: FEATURES[i].max, d: hi};
-      return {n: FEATURES[i].n, ...b}; })
+      return {i, n: FEATURES[i].n, ...b}; })
     .filter(t => Math.abs(t.d) >= 0.001).sort((a, b) => Math.abs(b.d) - Math.abs(a.d)).slice(0, 4);
-  if (!top.length) { $("why").innerHTML = "<p class='muted'>No single factor moves this result. The model is almost certain about this patient (high-risk probability " + (base * 100).toFixed(2) + "%), even when each input is pushed to its extreme.</p>"; return; }
+  if (!top.length) { $("why").innerHTML = "<p class='muted'>No single factor moves this result. The model is almost certain about this patient (high-risk probability " + (base * 100).toFixed(2) + "%), even when each input is pushed to its extreme.</p>"; return []; }
   $("why").innerHTML = top.map(t => { const pts = (t.d * 100).toFixed(1), up = t.d > 0;
     return `<div class="probability-item ${up ? "high" : "low"}"><strong>${t.n}</strong>: setting it to ${t.v} would ${up ? "raise" : "lower"} the high-risk probability by ${Math.abs(pts)} points</div>`; }).join("");
+  return top.map(t => t.i);
 }
 
 const clinic = [];
